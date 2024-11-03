@@ -1,9 +1,15 @@
+# blognews/api/views.py
+import logging
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from .models import Article, Category, Comment
 from .serializers import ArticleSerializer, CategorySerializer, CommentSerializer
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+logger = logging.getLogger(__name__)
 
 # Custom pagination class (optional)
 class StandardResultsSetPagination(PageNumberPagination):
@@ -19,7 +25,21 @@ class ArticleListCreateView(generics.ListCreateAPIView):
     pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        article = serializer.save(author=self.request.user)
+        logger.info(f'Article created: {article.title}, {article.created_at}, {article.author.username}')
+        # Send notification
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'notifications',
+            {
+                'type': 'send_notification',
+                'message': f'New article: {article.title}',
+                'article_name': article.title,
+                'article_date': article.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'article_author': article.author.username,
+                'article_link': f'/articles/{article.id}/'
+            }
+        )
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)

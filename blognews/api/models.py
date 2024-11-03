@@ -22,6 +22,12 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return f'/articles/{self.id}/'
+    
+    def get_author(self):
+        return self.author.username
 
 class Image(models.Model):
     article = models.ForeignKey(Article, related_name='images', on_delete=models.CASCADE)

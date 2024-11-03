@@ -1,3 +1,4 @@
+# C:\PORTFOLIO\Web_Developer\AmazingBlogApp\BlogAppEnv\blognews\api\urls.py
 from django.urls import path
 from .views import ArticleListCreateView, ArticleDetailView, CategoryListCreateView, CommentListCreateView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
