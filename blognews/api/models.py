@@ -14,8 +14,8 @@ class Category(models.Model):
 class Article(models.Model):
     title = models.CharField(max_length=200)
     body = RichTextUploadingField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="articles", default=1)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="articles", default=1)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="articles", null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="articles", null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     comments = models.ManyToManyField('Comment', related_name='article_comments', blank=True)
@@ -27,7 +27,24 @@ class Article(models.Model):
         return f'/articles/{self.id}/'
     
     def get_author(self):
-        return self.author.username
+        return {
+            'id': self.author.id if self.author else None,
+            'username': self.author.username if self.author else None,
+            'email': self.author.email if self.author else None
+        }
+    
+    def get_data(self):
+        return {
+            'title': self.title,
+            'body': self.body,
+            'author': self.get_author(),
+            'category': self.category.name if self.category else None,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'comments': [comment.body for comment in self.comments.all()],
+            'id': self.id,
+            'images': [image.to_dict() for image in self.images.all()]
+        }
 
 class Image(models.Model):
     article = models.ForeignKey(Article, related_name='images', on_delete=models.CASCADE)
@@ -35,12 +52,18 @@ class Image(models.Model):
 
     def __str__(self):
         return f"Image for {self.article.title}"
+    
+    def to_dict(self):
+        return {
+            'article': self.article.id,
+            'image_url': self.image.url if self.image else None
+        }
 
 class Comment(models.Model):
-    article = models.ForeignKey(Article, related_name='article_comments', on_delete=models.CASCADE, default=1)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    body = models.TextField(default='No content')
+    article = models.ForeignKey(Article, related_name='article_comments', on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    body = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
-        return f"Comment by {self.author.username} on {self.article.title}"
+        return f"Comment by {self.author.username if self.author else 'Anonymous'} on {self.article.title}"

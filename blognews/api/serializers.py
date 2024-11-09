@@ -1,3 +1,4 @@
+# blognews/api/serializers.py
 from rest_framework import serializers
 from .models import Article, Category, Comment, Image
 from django.contrib.auth.models import User

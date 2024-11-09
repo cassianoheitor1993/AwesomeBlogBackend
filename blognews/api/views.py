@@ -19,7 +19,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 # List and create articles
 class ArticleListCreateView(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
+    queryset = Article.objects.all().order_by('-created_at')
     serializer_class = ArticleSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = StandardResultsSetPagination

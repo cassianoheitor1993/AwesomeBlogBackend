@@ -1,6 +1,7 @@
 # C:\PORTFOLIO\Web_Developer\AmazingBlogApp\BlogAppEnv\blognews\blognews\settings.py
 from pathlib import Path
 import os
+from whitenoise import WhiteNoise
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,7 +16,7 @@ SECRET_KEY = 'django-insecure-#!q=y(x6e3#5n*j7ss2&n1^w7=3jh*y#-cxmj@48+&wuyb)l=8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -93,6 +94,7 @@ LOGGING = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -102,6 +104,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'blognews.urls'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 TEMPLATES = [
     {
@@ -120,7 +126,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'blognews.wsgi.application'
-
 
 # Channels and Redis Configuration
 ASGI_APPLICATION = 'blognews.asgi.application'
@@ -190,17 +195,53 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # CKEditor settings for Django upload to media folder
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
-# CKEditor 5 settings
-CKEDITOR_5_CONFIGS = {
+# CKEditor
+CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
         'height': 300,
-        'width': '100%',
-        'extraPlugins': ','.join([
-            'uploadimage',
-            'image2',  
-        ]),
-    }
+        'width': 300,
+    },
+    'extraPlugins': 'codesnippet',
+    'codesnippet_theme': 'monokai_sublime',
+    'codesnippet_languages': {
+        'python': 'Python',
+        'html': 'HTML',
+        'css': 'CSS',
+        'javascript': 'JavaScript',
+        'java': 'Java',
+        'ruby': 'Ruby',
+        'php': 'PHP',
+        'xml': 'XML',
+    },
+    'skin': 'moono-lisa',
+    'toolbar_Basic': [
+        ['Source', '-', 'Bold', 'Italic']
+    ],
+
+    'toolbar_YourCustomToolbarConfig': [
+        {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
+        {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+        {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+        {'name': 'forms',
+         'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+                   'HiddenField']},
+        '/',
+        {'name': 'basicstyles',
+         'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+        {'name': 'paragraph',
+         'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
+                   'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language']},
+        {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+        {'name': 'insert',
+         'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
+        '/',
+        {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+        {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+        {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+        {'name': 'about', 'items': ['About']},
+        '/',
+    ],
 }
 
 # Default primary key field type

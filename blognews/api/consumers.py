@@ -14,18 +14,22 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         pass
 
     async def send_notification(self, event):
-        # log the event
-        print("NotificationConsumer event: ", event)
         message = event['message']
-        article_name = event.get('article_name', 'Unknown')
-        article_date = event.get('article_date', 'Unknown')
-        article_author = event.get('article_author', 'Unknown')
-        article_link = event.get('article_link', 'Unknown')
+        event_type = event.get('type', 'unknown')
 
+        if event_type == 'send_notification':
+            article_data = event.get('article_data', {})
+            await self.send(text_data=json.dumps({
+                'message': message,
+                'article_data': article_data,
+            }))
+        elif event_type == 'delete_article':
+            await self.delete_article(event)
+
+    async def delete_article(self, event):
+        message = event['message']
+        article_id = event.get('article_id', 'Unknown')
         await self.send(text_data=json.dumps({
             'message': message,
-            'article_name': article_name,
-            'article_date': article_date,
-            'article_author': article_author,
-            'article_link': article_link
+            'article_id': article_id
         }))
