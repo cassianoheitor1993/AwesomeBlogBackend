@@ -1,3 +1,4 @@
+# models.py
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
@@ -22,28 +23,32 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return f'/articles/{self.id}/'
     
-    def get_author(self):
-        return {
-            'id': self.author.id if self.author else None,
-            'username': self.author.username if self.author else None,
-            'email': self.author.email if self.author else None
-        }
+    def get_author_data(self):
+        """Encapsulate author data fetching in a separate method."""
+        if self.author:
+            return {
+                'id': self.author.id,
+                'username': self.author.username,
+                'email': self.author.email
+            }
+        return None
     
     def get_data(self):
+        """Encapsulate article data retrieval into a dictionary format."""
         return {
             'title': self.title,
             'body': self.body,
-            'author': self.get_author(),
+            'author': self.get_author_data(),
             'category': self.category.name if self.category else None,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
-            'comments': [comment.body for comment in self.comments.all()],
-            'id': self.id,
-            'images': [image.to_dict() for image in self.images.all()]
+            'comments': [comment.to_dict() for comment in self.comments.all()],
+            'images': [image.to_dict() for image in self.images.all()],
+            'id': self.id
         }
 
 class Image(models.Model):
@@ -52,10 +57,11 @@ class Image(models.Model):
 
     def __str__(self):
         return f"Image for {self.article.title}"
-    
+
     def to_dict(self):
+        """Encapsulate image data retrieval in a dictionary format."""
         return {
-            'article': self.article.id,
+            'article_id': self.article.id,
             'image_url': self.image.url if self.image else None
         }
 
@@ -67,3 +73,12 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author.username if self.author else 'Anonymous'} on {self.article.title}"
+
+    def to_dict(self):
+        """Encapsulate comment data retrieval in a dictionary format."""
+        return {
+            'id': self.id,
+            'author': self.author.username if self.author else 'Anonymous',
+            'body': self.body,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }

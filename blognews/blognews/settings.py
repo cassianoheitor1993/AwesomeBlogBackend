@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-#!q=y(x6e3#5n*j7ss2&n1^w7=3jh*y#-cxmj@48+&wuyb)l=8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ['192.168.0.166', 'localhost', '127.0.0.1']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -131,15 +131,15 @@ WSGI_APPLICATION = 'blognews.wsgi.application'
 ASGI_APPLICATION = 'blognews.asgi.application'
 
 
-# settings.py
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('52.205.13.148', 6379)],
         },
     },
 }
+
 
 
 # Database
@@ -252,6 +252,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8081",
+    "http://192.168.0.166:3000",
 ]
 
 # blogapi/settings.py

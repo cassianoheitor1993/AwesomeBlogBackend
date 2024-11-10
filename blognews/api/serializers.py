@@ -1,4 +1,3 @@
-# blognews/api/serializers.py
 from rest_framework import serializers
 from .models import Article, Category, Comment, Image
 from django.contrib.auth.models import User
@@ -15,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    
+
     class Meta:
         model = Comment
         fields = ['id', 'author', 'body', 'created_at']
@@ -32,4 +31,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'body', 'author', 'category', 'created_at', 'updated_at', 'comments', 'images']
+        fields = [
+            'id', 'title', 'body', 'author', 'category',
+            'created_at', 'updated_at', 'comments', 'images'
+        ]
